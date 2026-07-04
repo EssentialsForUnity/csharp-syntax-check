@@ -1,0 +1,122 @@
+name: C# Syntax Check
+
+on:
+  workflow_call:
+    inputs:
+      path:
+        description: Repository-relative path to scan.
+        required: false
+        type: string
+        default: .
+      dotnet-version:
+        description: .NET SDK version used to run the checker.
+        required: false
+        type: string
+        default: 8.0.x
+      language-version:
+        description: C# language version passed to Roslyn.
+        required: false
+        type: string
+        default: preview
+      exclude-directories:
+        description: Comma-separated directory names or relative paths to skip.
+        required: false
+        type: string
+        default: .git,.vs,bin,Build,Builds,Library,Logs,obj,Temp,UserSettings
+      fail-on-empty:
+        description: Fail when no C# files are found.
+        required: false
+        type: boolean
+        default: true
+      checker-repository:
+        description: Repository containing the checker implementation.
+        required: false
+        type: string
+        default: EssentialsForUnity/csharp-syntax-check
+      checker-ref:
+        description: Ref to check out for the checker implementation.
+        required: false
+        type: string
+        default: main
+  workflow_dispatch:
+    inputs:
+      path:
+        description: Repository-relative path to scan.
+        required: false
+        type: string
+        default: .
+      dotnet-version:
+        description: .NET SDK version used to run the checker.
+        required: false
+        type: string
+        default: 8.0.x
+      language-version:
+        description: C# language version passed to Roslyn.
+        required: false
+        type: string
+        default: preview
+      exclude-directories:
+        description: Comma-separated directory names or relative paths to skip.
+        required: false
+        type: string
+        default: .git,.vs,bin,Build,Builds,Library,Logs,obj,Temp,UserSettings
+      fail-on-empty:
+        description: Fail when no C# files are found.
+        required: false
+        type: boolean
+        default: true
+      checker-repository:
+        description: Repository containing the checker implementation.
+        required: false
+        type: string
+        default: EssentialsForUnity/csharp-syntax-check
+      checker-ref:
+        description: Ref to check out for the checker implementation.
+        required: false
+        type: string
+        default: main
+
+permissions:
+  contents: read
+
+jobs:
+  syntax:
+    name: Parse C# files
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v6
+        with:
+          lfs: false
+          submodules: false
+
+      - name: Checkout checker
+        uses: actions/checkout@v6
+        with:
+          repository: ${{ inputs.checker-repository }}
+          ref: ${{ inputs.checker-ref }}
+          path: .csharp-syntax-check
+          lfs: false
+          submodules: false
+
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v5
+        with:
+          dotnet-version: ${{ inputs.dotnet-version }}
+
+      - name: Run syntax check
+        shell: bash
+        run: |
+          args=(
+            --path "${{ inputs.path }}"
+            --language-version "${{ inputs.language-version }}"
+            --exclude-directories "${{ inputs.exclude-directories }}"
+          )
+
+          if [[ "${{ inputs.fail-on-empty }}" == "false" ]]; then
+            args+=(--no-fail-on-empty)
+          fi
+
+          dotnet run --project .csharp-syntax-check/src/CSharpSyntaxCheck -- "${args[@]}"

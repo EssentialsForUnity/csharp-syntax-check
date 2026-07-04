@@ -1,0 +1,47 @@
+name: C# Syntax Check
+description: Parse C# files with Roslyn and fail on syntax diagnostics.
+
+inputs:
+  path:
+    description: Repository-relative path to scan.
+    required: false
+    default: .
+  dotnet-version:
+    description: .NET SDK version used to run the checker.
+    required: false
+    default: 8.0.x
+  language-version:
+    description: C# language version passed to Roslyn.
+    required: false
+    default: preview
+  exclude-directories:
+    description: Comma-separated directory names or relative paths to skip.
+    required: false
+    default: .git,.vs,bin,Build,Builds,Library,Logs,obj,Temp,UserSettings
+  fail-on-empty:
+    description: Fail when no C# files are found.
+    required: false
+    default: "true"
+
+runs:
+  using: composite
+  steps:
+    - name: Setup .NET
+      uses: actions/setup-dotnet@v5
+      with:
+        dotnet-version: ${{ inputs.dotnet-version }}
+
+    - name: Run syntax check
+      shell: bash
+      run: |
+        args=(
+          --path "${{ inputs.path }}"
+          --language-version "${{ inputs.language-version }}"
+          --exclude-directories "${{ inputs.exclude-directories }}"
+        )
+
+        if [[ "${{ inputs.fail-on-empty }}" == "false" ]]; then
+          args+=(--no-fail-on-empty)
+        fi
+
+        dotnet run --project "$GITHUB_ACTION_PATH/src/CSharpSyntaxCheck" -- "${args[@]}"
