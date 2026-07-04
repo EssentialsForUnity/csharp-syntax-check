@@ -17,11 +17,11 @@ inputs:
   exclude-directories:
     description: Comma-separated directory names or relative paths to skip.
     required: false
-    default: .git,.vs,bin,Build,Builds,Library,Logs,obj,Temp,UserSettings
+    default: .git,.vs,.csharp-syntax-check,bin,Build,Builds,Library,Logs,obj,Temp,UserSettings
   fail-on-empty:
     description: Fail when no C# files are found.
     required: false
-    default: "true"
+    default: "false"
 
 runs:
   using: composite

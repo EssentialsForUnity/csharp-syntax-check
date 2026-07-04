@@ -59,11 +59,23 @@ jobs:
       path: .
       dotnet-version: 8.0.x
       language-version: preview
-      exclude-directories: .git,.vs,bin,Build,Builds,Library,Logs,obj,Temp,UserSettings
-      fail-on-empty: true
+      exclude-directories: .git,.vs,.csharp-syntax-check,bin,Build,Builds,Library,Logs,obj,Temp,UserSettings
+      fail-on-empty: false
       checker-repository: EssentialsForUnity/csharp-syntax-check
       checker-ref: main
 ```
+
+## What Gets Checked
+
+By default the checker scans every `*.cs` file under `path`, recursively. The default `path` is `.`, so in a Unity repository it checks C# files under both `Assets/` and `Packages/`, plus any other repository folder that contains `.cs` files.
+
+It skips these directory names by default anywhere in the tree:
+
+```text
+.git,.vs,.csharp-syntax-check,bin,Build,Builds,Library,Logs,obj,Temp,UserSettings
+```
+
+If no C# files are found, the check passes by default. Set `fail-on-empty: true` when an empty scan should be treated as a misconfiguration.
 
 ## What This Does Not Do
 

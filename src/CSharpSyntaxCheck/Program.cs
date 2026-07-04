@@ -181,6 +181,7 @@ internal sealed record Options(
     {
         ".git",
         ".vs",
+        ".csharp-syntax-check",
         "bin",
         "Build",
         "Builds",
@@ -196,7 +197,7 @@ internal sealed record Options(
         var path = ".";
         var languageVersion = "preview";
         var excludedDirectories = DefaultExcludedDirectories.ToList();
-        var failOnEmpty = true;
+        var failOnEmpty = false;
 
         for (var index = 0; index < args.Length; index++)
         {
@@ -264,7 +265,7 @@ internal sealed record Options(
 
     public static void PrintUsage()
     {
-        Console.Error.WriteLine("Usage: CSharpSyntaxCheck [--path <path>] [--language-version <version>] [--exclude-directories <list>] [--no-fail-on-empty]");
+        Console.Error.WriteLine("Usage: CSharpSyntaxCheck [--path <path>] [--language-version <version>] [--exclude-directories <list>] [--fail-on-empty]");
     }
 
     private static bool TryReadValue(string[] args, ref int index, string optionName, out string value)
@@ -299,5 +300,5 @@ internal sealed record ParseResult(bool Success, Options Value, string Error)
 {
     public static ParseResult Ok(Options options) => new(true, options, string.Empty);
 
-    public static ParseResult Fail(string error) => new(false, new Options(".", "preview", Array.Empty<string>(), true, false), error);
+    public static ParseResult Fail(string error) => new(false, new Options(".", "preview", Array.Empty<string>(), false, false), error);
 }

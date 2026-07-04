@@ -22,12 +22,12 @@ on:
         description: Comma-separated directory names or relative paths to skip.
         required: false
         type: string
-        default: .git,.vs,bin,Build,Builds,Library,Logs,obj,Temp,UserSettings
+        default: .git,.vs,.csharp-syntax-check,bin,Build,Builds,Library,Logs,obj,Temp,UserSettings
       fail-on-empty:
         description: Fail when no C# files are found.
         required: false
         type: boolean
-        default: true
+        default: false
       checker-repository:
         description: Repository containing the checker implementation.
         required: false
@@ -59,12 +59,12 @@ on:
         description: Comma-separated directory names or relative paths to skip.
         required: false
         type: string
-        default: .git,.vs,bin,Build,Builds,Library,Logs,obj,Temp,UserSettings
+        default: .git,.vs,.csharp-syntax-check,bin,Build,Builds,Library,Logs,obj,Temp,UserSettings
       fail-on-empty:
         description: Fail when no C# files are found.
         required: false
         type: boolean
-        default: true
+        default: false
       checker-repository:
         description: Repository containing the checker implementation.
         required: false

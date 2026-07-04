@@ -11,3 +11,5 @@ permissions:
 jobs:
   syntax:
     uses: ./.github/workflows/csharp-syntax.yml
+    with:
+      checker-ref: ${{ github.sha }}
