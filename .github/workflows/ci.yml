@@ -9,7 +9,25 @@ permissions:
   contents: read
 
 jobs:
-  syntax:
+  valid-fixture:
     uses: ./.github/workflows/csharp-syntax.yml
     with:
+      path: tests/fixtures/valid-csharp
       checker-ref: ${{ github.sha }}
+      fail-on-empty: true
+
+  invalid-fixtures:
+    name: Reject invalid fixtures
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v6
+
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v5
+        with:
+          dotnet-version: 8.0.x
+
+      - name: Invalid fixtures should fail
+        shell: bash
+        run: bash tests/run-negative-tests.sh
